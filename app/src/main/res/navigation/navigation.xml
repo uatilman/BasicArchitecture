@@ -8,7 +8,7 @@
         android:id="@+id/name_fragment"
         android:name="ru.otus.basicarchitecture.NameFragment"
         android:label="@string/name_fragment_label"
-        tools:layout="@layout/fragment_name" >
+        tools:layout="@layout/fragment_name">
         <action
             android:id="@+id/action_name_fragment_to_address_fragment"
             app:destination="@id/address_fragment" />
@@ -17,5 +17,15 @@
         android:id="@+id/address_fragment"
         android:name="ru.otus.basicarchitecture.AddressFragment"
         android:label="@string/address_fragment_label"
-        tools:layout="@layout/fragment_address" />
+        tools:layout="@layout/fragment_address">
+        <action
+            android:id="@+id/action_address_fragment_to_tags_fragment"
+            app:destination="@id/tags_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/tags_fragment"
+        android:name="ru.otus.basicarchitecture.TagsFragment"
+        android:label="@string/address_fragment_label"
+        tools:layout="@layout/fragment_tags" />
 </navigation>
