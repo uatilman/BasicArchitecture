@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">BasicArchitecture</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_name">Name</string>
+    <string name="hint_surname">Surname</string>
+    <string name="btn_next">Next</string>
+    <string name="hint_birthday">Birthday</string>
+    <string name="name_fragment_label">Name Fragment (1)</string>
+    <string name="data_picker_title">Select your Birthday</string>
 </resources>
