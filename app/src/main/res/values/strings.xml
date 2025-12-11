@@ -11,6 +11,9 @@
     <string name="hint_birthday">Birthday</string>
     <string name="name_fragment_label">Name and Age</string>
     <string name="address_fragment_label">Address</string>
-    <string name="address_fragment_label">Tags</string>
+    <string name="tags_fragment_label">Tags</string>
     <string name="data_picker_title">Select your Birthday</string>
+    <string name="invalid_name">Некорректное имя</string>
+    <string name="invalid_surname">Некорректная фамилия</string>
+    <string name="invalid_age">Вы должны быть старше 18 лет</string>
 </resources>

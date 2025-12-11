@@ -6,7 +6,7 @@
     app:startDestination="@id/name_fragment">
     <fragment
         android:id="@+id/name_fragment"
-        android:name="ru.otus.basicarchitecture.NameFragment"
+        android:name="ru.otus.basicarchitecture.view.NameFragment"
         android:label="@string/name_fragment_label"
         tools:layout="@layout/fragment_name">
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/address_fragment"
-        android:name="ru.otus.basicarchitecture.AddressFragment"
+        android:name="ru.otus.basicarchitecture.view.AddressFragment"
         android:label="@string/address_fragment_label"
         tools:layout="@layout/fragment_address">
         <action
@@ -25,7 +25,7 @@
 
     <fragment
         android:id="@+id/tags_fragment"
-        android:name="ru.otus.basicarchitecture.TagsFragment"
-        android:label="@string/address_fragment_label"
+        android:name="ru.otus.basicarchitecture.view.TagsFragment"
+        android:label="@string/tags_fragment_label"
         tools:layout="@layout/fragment_tags" />
 </navigation>

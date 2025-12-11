@@ -1,4 +1,4 @@
-package ru.otus.basicarchitecture
+package ru.otus.basicarchitecture.view_model
 
 import androidx.lifecycle.ViewModel
 
