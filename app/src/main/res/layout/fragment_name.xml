@@ -83,10 +83,11 @@
     <Button
         android:id="@+id/to_address_next_button"
         android:layout_width="0dp"
+        android:enabled="false"
+        android:clickable="false"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="40dp"
-        android:backgroundTint="@color/design_default_color_primary_variant"
         android:text="@string/btn_next"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -2,93 +2,83 @@ package ru.otus.basicarchitecture.view_model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.regex.Pattern
+import ru.otus.basicarchitecture.use_case.FieldValidationUseCase
 
-class NameFragmentModel : ViewModel() {
+@HiltViewModel
+class NameFragmentModel @Inject constructor(
+    private val fieldValidationUseCase: FieldValidationUseCase
+) : ViewModel() {
 
-    private val _name = MutableStateFlow("")
-    val name: StateFlow<String> = _name.asStateFlow()
+    private val _name = MutableStateFlow(StringFiledDto("", false))
+    val name: StateFlow<StringFiledDto> = _name.asStateFlow()
 
-    private val _surname = MutableStateFlow("")
-    val surname: StateFlow<String> = _surname.asStateFlow()
+    private val _surname = MutableStateFlow(StringFiledDto("", false))
+    val surname: StateFlow<StringFiledDto> = _surname.asStateFlow()
 
-    private val _birthDate = MutableStateFlow<Long?>(null)
-    val birthDate: StateFlow<Long?> = _birthDate.asStateFlow()
+    private val _birthDate = MutableStateFlow(LongFiledDto(null, false))
+    val birthDate: StateFlow<LongFiledDto> = _birthDate.asStateFlow()
 
-    private val _validationEvent = MutableSharedFlow<Event<ValidationEvent>>()
-    val validationEvent: SharedFlow<Event<ValidationEvent>> = _validationEvent
+    private val _validationEvent = MutableSharedFlow<ValidationEvent>()
+    val validationEvent: SharedFlow<ValidationEvent> = _validationEvent
 
     fun setName(name: String) {
-        _name.value = name
-
+        if (fieldValidationUseCase.isNameInvalid(name)) {
+            _name.value = StringFiledDto(name, false)
+            sendEvent(ValidationEvent.InvalidName)
+        } else {
+            sendEvent(ValidationEvent.ValidName)
+            _name.value = StringFiledDto(name, true)
+        }
     }
 
-
     fun setSurname(surname: String) {
-        _surname.value = surname
-
+        if (fieldValidationUseCase.isSurnameInvalid(surname)) {
+            _surname.value = StringFiledDto(surname, false)
+            sendEvent(ValidationEvent.InvalidSurname)
+        } else {
+            _surname.value = StringFiledDto(surname, true)
+            sendEvent(ValidationEvent.ValidSurname)
+        }
     }
 
     fun setBirthDate(date: Long?) {
-        _birthDate.value = date
-
-    }
-
-    fun validateName() {
-        if (name.value.length > 2 && !pattern.toRegex().matches(name.value))
-            sendEvent(ValidationEvent.InvalidName)
-    }
-
-    fun validateSurname() {
-        if (surname.value.length > 2 && !pattern.toRegex().matches(surname.value))
-            sendEvent(ValidationEvent.InvalidSurname)
-    }
-
-    fun validateAge() {
-        val birthDate = birthDate.value
-        if (birthDate == null || birthDate > eighteenYearsAgo) {
+        if (fieldValidationUseCase.isAgeInvalid(date)) {
+            _birthDate.value = LongFiledDto(date, false)
             sendEvent(ValidationEvent.InvalidAge)
+        } else {
+            _birthDate.value = LongFiledDto(date, true)
+            sendEvent(ValidationEvent.ValidAge)
         }
     }
 
     private fun sendEvent(event: ValidationEvent) = viewModelScope.launch {
-        _validationEvent.emit(Event(event))
-    }
-
-    companion object {
-        const val USERNAME_PATTERN = "^[A-ZА-Я]([._-](?![._-])|[a-zа-я]){1,18}[a-zа-я]$"
-        val eighteenYearsAgo: Long
-            get() = System.currentTimeMillis() - (18 * 365.25 * 24 * 60 * 60 * 1000).toLong()
-
-        var pattern: Pattern =
-            Pattern.compile(USERNAME_PATTERN, Pattern.CASE_INSENSITIVE)
-
+        _validationEvent.emit(event)
     }
 }
 
+interface FieldValueDto<T> {
+    val fValue: T
+    val isValid: Boolean
+}
+
+class StringFiledDto(override val fValue: String, override val isValid: Boolean) :
+    FieldValueDto<String>
+
+class LongFiledDto(override val fValue: Long?, override val isValid: Boolean) : FieldValueDto<Long?>
 
 sealed interface ValidationEvent {
     object InvalidName : ValidationEvent
+    object ValidName : ValidationEvent
     object InvalidSurname : ValidationEvent
+    object ValidSurname : ValidationEvent
     object InvalidAge : ValidationEvent
-}
-
-open class Event<out T>(private val content: T) {
-    var hasBeenHandled = false
-        private set
-
-    fun getContentIfNotHandled(): T? {
-        return if (hasBeenHandled) {
-            null
-        } else {
-            hasBeenHandled = true
-            content
-        }
-    }
+    object ValidAge : ValidationEvent
 }

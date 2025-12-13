@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.otus.basicarchitecture.R
 import ru.otus.basicarchitecture.databinding.FragmentNameBinding
@@ -24,6 +24,7 @@ import java.util.TimeZone
 import kotlin.time.ExperimentalTime
 
 
+@AndroidEntryPoint
 class NameFragment : Fragment() {
 
     private var _binding: FragmentNameBinding? = null
@@ -60,16 +61,10 @@ class NameFragment : Fragment() {
 
     private fun setupTextWatchers() {
         with(binding) {
-            // Сохраняем значение при изменении, но НЕ валидируем сразу
-            name.addTextChangedListener { viewModel.setName(it.toString()) }
-            surname.addTextChangedListener { viewModel.setSurname(it.toString()) }
-            birthday.addTextChangedListener { viewModel.setBirthDate(parseTextData(it.toString())?.time) }
-
-            // Валидация ТОЛЬКО при потере фокуса
             name.onFocusChangeListener =
-                createValidationOnFocusChangeListener { viewModel.validateName() }
+                createValidationOnFocusChangeListener { viewModel.setName(it) }
             surname.onFocusChangeListener =
-                createValidationOnFocusChangeListener { viewModel.validateSurname() }
+                createValidationOnFocusChangeListener { viewModel.setSurname(it) }
         }
     }
 
@@ -92,25 +87,55 @@ class NameFragment : Fragment() {
         // Наблюдение за событиями валидации
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.validationEvent.collect { event ->
-                when (val content = event.getContentIfNotHandled()) {
-                    ValidationEvent.InvalidName -> showInvalidNameToast()
-                    ValidationEvent.InvalidSurname -> showInvalidSurnameToast()
-                    ValidationEvent.InvalidAge -> showInvalidAgeToast()
-                    null -> Unit
+                when (event) {
+                    ValidationEvent.InvalidName -> doInvalidName()
+                    ValidationEvent.InvalidSurname -> doInvalidSurname()
+                    ValidationEvent.InvalidAge -> doInvalidAge()
+
+                    ValidationEvent.ValidAge,
+                    ValidationEvent.ValidName,
+                    ValidationEvent.ValidSurname -> doSomeValid()
+
                 }
             }
         }
     }
 
-    private fun showInvalidNameToast() {
+    private fun doSomeValid() {
+        if (
+            viewModel.name.value.isValid
+            && viewModel.surname.value.isValid
+            && viewModel.birthDate.value.isValid
+        )
+            enableNextButton()
+    }
+
+    private fun enableNextButton() {
+        with(binding) {
+            toAddressNextButton.isEnabled = true
+            toAddressNextButton.isClickable = true
+        }
+    }
+
+    private fun disableNextButton() {
+        with(binding) {
+            toAddressNextButton.isEnabled = false
+            toAddressNextButton.isClickable = false
+        }
+    }
+
+    private fun doInvalidName() {
+        disableNextButton()
         Toast.makeText(context, getString(R.string.invalid_name), Toast.LENGTH_SHORT).show()
     }
 
-    private fun showInvalidSurnameToast() {
+    private fun doInvalidSurname() {
+        disableNextButton()
         Toast.makeText(context, getString(R.string.invalid_surname), Toast.LENGTH_SHORT).show()
     }
 
-    private fun showInvalidAgeToast() {
+    private fun doInvalidAge() {
+        disableNextButton()
         Toast.makeText(context, getString(R.string.invalid_age), Toast.LENGTH_SHORT).show()
     }
 
@@ -141,7 +166,11 @@ class NameFragment : Fragment() {
                     datePicker.show(childFragmentManager, "birthday_date")
 
                 } else {
-                    viewModel.validateAge()
+                    (v as? TextInputEditText)
+                        ?.text?.toString()
+                        ?.let { viewModel.setBirthDate(parseTextData(it)?.time) }
+                        ?: viewModel.setBirthDate(null)
+
                 }
             }
 
@@ -149,8 +178,9 @@ class NameFragment : Fragment() {
         }
     }
 
-    private fun parseTextData(textData: String): Date? = dateFormat
-        .parse(textData)
+    private fun parseTextData(textData: String): Date? = runCatching {
+        dateFormat.parse(textData)
+    }.getOrNull()
 
     override fun onDestroyView() {
         super.onDestroyView()
