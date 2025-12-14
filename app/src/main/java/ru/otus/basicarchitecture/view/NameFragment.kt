@@ -168,13 +168,11 @@ class NameFragment : Fragment() {
                 } else {
                     (v as? TextInputEditText)
                         ?.text?.toString()
-                        ?.let { viewModel.setBirthDate(parseTextData(it)?.time) }
-                        ?: viewModel.setBirthDate(null)
+                        ?.let { viewModel.setBirthDate(parseTextData(it)?.time ?: 0) }
+                        ?: viewModel.setBirthDate(0)
 
                 }
             }
-
-
         }
     }
 

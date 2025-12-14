@@ -23,7 +23,7 @@ class NameFragmentModel @Inject constructor(
     private val _surname = MutableStateFlow(StringFiledDto("", false))
     val surname: StateFlow<StringFiledDto> = _surname.asStateFlow()
 
-    private val _birthDate = MutableStateFlow(LongFiledDto(null, false))
+    private val _birthDate = MutableStateFlow(LongFiledDto(0, false))
     val birthDate: StateFlow<LongFiledDto> = _birthDate.asStateFlow()
 
     private val _validationEvent = MutableSharedFlow<ValidationEvent>()
@@ -49,7 +49,7 @@ class NameFragmentModel @Inject constructor(
         }
     }
 
-    fun setBirthDate(date: Long?) {
+    fun setBirthDate(date: Long) {
         if (fieldValidationUseCase.isAgeInvalid(date)) {
             _birthDate.value = LongFiledDto(date, false)
             sendEvent(ValidationEvent.InvalidAge)
@@ -72,7 +72,7 @@ interface FieldValueDto<T> {
 class StringFiledDto(override val fValue: String, override val isValid: Boolean) :
     FieldValueDto<String>
 
-class LongFiledDto(override val fValue: Long?, override val isValid: Boolean) : FieldValueDto<Long?>
+class LongFiledDto(override val fValue: Long, override val isValid: Boolean) : FieldValueDto<Long?>
 
 sealed interface ValidationEvent {
     object InvalidName : ValidationEvent
