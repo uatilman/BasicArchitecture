@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import ru.otus.basicarchitecture.R
 import ru.otus.basicarchitecture.databinding.FragmentNameBinding
 import ru.otus.basicarchitecture.view_model.NameFragmentModel
-import ru.otus.basicarchitecture.view_model.ValidationEvent
+import ru.otus.basicarchitecture.model.ValidationEvent
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

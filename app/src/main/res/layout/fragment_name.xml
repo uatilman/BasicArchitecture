@@ -74,8 +74,8 @@
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 android:focusable="true"
-                android:hint="@string/hint_birthday"
                 android:inputType="date"
+                android:hint="dd/mm/yyyy"
                 android:digits="0123456789/"/>
         </com.google.android.material.textfield.TextInputLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,7 +10,7 @@ import jakarta.inject.Singleton
 import ru.otus.basicarchitecture.service.DaDataService
 import ru.otus.basicarchitecture.use_case.AddressSuggestUseCase
 import ru.otus.basicarchitecture.use_case.FieldValidationUseCase
-import ru.otus.basicarchitecture.view_model.DataCache
+import ru.otus.basicarchitecture.view_model.WizardCache
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -26,8 +26,7 @@ abstract class AppModule {
 abstract class ActivityModule {
     @Binds
     @Singleton
-    abstract fun dataCache(impl: DataCache.Impl): DataCache
-
+    abstract fun wizardCache(impl: WizardCache.Impl): WizardCache
 }
 
 @Module

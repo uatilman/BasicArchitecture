@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ru.otus.basicarchitecture.model.LongFiledDto
+import ru.otus.basicarchitecture.model.StringFiledDto
+import ru.otus.basicarchitecture.model.ValidationEvent
 import ru.otus.basicarchitecture.use_case.FieldValidationUseCase
 
 @HiltViewModel
@@ -62,23 +65,4 @@ class NameFragmentModel @Inject constructor(
     private fun sendEvent(event: ValidationEvent) = viewModelScope.launch {
         _validationEvent.emit(event)
     }
-}
-
-interface FieldValueDto<T> {
-    val fValue: T
-    val isValid: Boolean
-}
-
-class StringFiledDto(override val fValue: String, override val isValid: Boolean) :
-    FieldValueDto<String>
-
-class LongFiledDto(override val fValue: Long, override val isValid: Boolean) : FieldValueDto<Long?>
-
-sealed interface ValidationEvent {
-    object InvalidName : ValidationEvent
-    object ValidName : ValidationEvent
-    object InvalidSurname : ValidationEvent
-    object ValidSurname : ValidationEvent
-    object InvalidAge : ValidationEvent
-    object ValidAge : ValidationEvent
 }

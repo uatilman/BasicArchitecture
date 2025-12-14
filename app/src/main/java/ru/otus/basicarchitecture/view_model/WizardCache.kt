@@ -12,24 +12,35 @@ import ru.otus.basicarchitecture.model.UserData
 
 
 @ActivityScoped
-interface DataCache : AutoCloseable {
+interface WizardCache : AutoCloseable {
+
+    val userData: UserData
 
     class Impl @Inject constructor(
-        private val nameFragmentModel: NameFragmentModel,
-        private val addressFragmentModel: AddressFragmentModel
-    ) : DataCache {
+        nameFragmentModel: NameFragmentModel,
+        addressFragmentModel: AddressFragmentModel,
+    ) : WizardCache {
 
         private var name: String = ""
-
         private var surname: String = ""
         private var birthDate: Long = 0
         private var country: String = ""
         private var city: String = ""
         private var address: String = ""
+        private var tags: List<String> = emptyList()
 
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-        val userData: UserData get() = UserData(name, surname, birthDate, country, city, address)
+        override val userData: UserData
+            get() = UserData(
+                name,
+                surname,
+                birthDate,
+                country,
+                city,
+                address,
+                tags
+            )
 
         init {
             nameFragmentModel.name
@@ -49,12 +60,11 @@ interface DataCache : AutoCloseable {
                     if (birthDate.isValid) this.birthDate = birthDate.fValue
                 }
                 .launchIn(scope)
+
         }
 
         override fun close() {
             scope.cancel()
         }
-
     }
-
 }
