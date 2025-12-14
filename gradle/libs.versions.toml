@@ -1,0 +1,41 @@
+[versions]
+androidGradlePlugin = "8.13.1"
+kotlin = "2.2.21"
+daggerHilt = "2.57.2"
+navigation = "2.9.6"
+ksp = "2.2.21-2.0.4"
+androidxCore = "1.17.0"
+androidxAppCompat = "1.7.1"
+material = "1.13.0"
+constraintLayout = "2.2.1"
+androidxLifecycle = "2.10.0"
+androidxFragment = "1.8.9"
+junit = "4.13.2"
+androidxTestExt = "1.3.0"
+espresso = "3.7.0"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCore"}
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppCompat"}
+material = { group = "com.google.android.material", name = "material", version.ref = "material"}
+constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout"}
+dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "daggerHilt"}
+dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "daggerHilt"}
+androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation"}
+androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation"}
+androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version = "1.0.0" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "androidxLifecycle"}
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle"}
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment"}
+junit = { group = "junit", name = "junit", version.ref = "junit"}
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExt"}
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso"}
+androidx-navigation-safe-args-gradle-plugin = { group = "androidx.navigation", name = "navigation-safe-args-gradle-plugin", version.ref = "navigation"}
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
+android-library = { id = "com.android.library", version.ref = "androidGradlePlugin"}
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}
+dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt"}
+androidx-navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation"}
