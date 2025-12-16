@@ -13,10 +13,11 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import ru.otus.basicarchitecture.FragmentBindingDelegate
 import ru.otus.basicarchitecture.R
 import ru.otus.basicarchitecture.databinding.FragmentNameBinding
-import ru.otus.basicarchitecture.view_model.NameFragmentModel
 import ru.otus.basicarchitecture.model.ValidationEvent
+import ru.otus.basicarchitecture.view_model.NameFragmentModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -27,8 +28,8 @@ import kotlin.time.ExperimentalTime
 @AndroidEntryPoint
 class NameFragment : Fragment() {
 
-    private var _binding: FragmentNameBinding? = null
-    private val binding get() = _binding!!
+    private var binding = FragmentBindingDelegate<FragmentNameBinding>(this)
+
 
     private val viewModel by viewModels<NameFragmentModel>()
 
@@ -41,10 +42,7 @@ class NameFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentNameBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    ): View = binding.bind(container, FragmentNameBinding::inflate)
 
     @OptIn(ExperimentalTime::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,7 +58,7 @@ class NameFragment : Fragment() {
     }
 
     private fun setupTextWatchers() {
-        with(binding) {
+        binding.withBinding {
             name.onFocusChangeListener =
                 createValidationOnFocusChangeListener { viewModel.setName(it) }
             surname.onFocusChangeListener =
@@ -80,7 +78,7 @@ class NameFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        binding.toAddressNextButton.setOnClickListener(::toAddressButtonClickListener)
+        binding.withBinding { toAddressNextButton.setOnClickListener(::toAddressButtonClickListener)}
     }
 
     private fun setupObservers() {
@@ -111,14 +109,14 @@ class NameFragment : Fragment() {
     }
 
     private fun enableNextButton() {
-        with(binding) {
+       binding.withBinding {
             toAddressNextButton.isEnabled = true
             toAddressNextButton.isClickable = true
         }
     }
 
     private fun disableNextButton() {
-        with(binding) {
+        binding.withBinding {
             toAddressNextButton.isEnabled = false
             toAddressNextButton.isClickable = false
         }
@@ -140,7 +138,7 @@ class NameFragment : Fragment() {
     }
 
     private fun setDataPicker() {
-        with(binding) {
+        binding.withBinding {
             val datePickerBuilder = MaterialDatePicker
                 .Builder
                 .datePicker()
@@ -180,8 +178,5 @@ class NameFragment : Fragment() {
         dateFormat.parse(textData)
     }.getOrNull()
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
+
 }
