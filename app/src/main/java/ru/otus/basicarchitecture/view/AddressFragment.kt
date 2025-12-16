@@ -6,8 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
-import ru.otus.basicarchitecture.R
+import kotlinx.coroutines.launch
 import ru.otus.basicarchitecture.databinding.FragmentAddressBinding
 import ru.otus.basicarchitecture.view_model.AddressFragmentModel
 
@@ -15,29 +16,45 @@ import ru.otus.basicarchitecture.view_model.AddressFragmentModel
 class AddressFragment : Fragment() {
 
 
-    private var _binding: FragmentAddressBinding? = null
-    private val binding get() = _binding!!
+    private var binding = FragmentBindingDelegate<FragmentAddressBinding>(this)
 
     private val viewModel by viewModels<AddressFragmentModel>()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // TODO: Use the ViewModel
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentAddressBinding.inflate(inflater, container, false)
+    ): View = binding.bind(container, FragmentAddressBinding::inflate)
 
-        return binding.root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupTextWatchers()
     }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    private fun setupTextWatchers() {
+        binding.withBinding {
+            country.onFocusChangeListener =
+                createValidationOnFocusChangeListener {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.updateAddress(country = it)
+                    }
+                }
+            city.onFocusChangeListener =
+                createValidationOnFocusChangeListener {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.updateAddress(
+                            city = it
+                        )
+                    }
+                }
+            street.onFocusChangeListener =
+                createValidationOnFocusChangeListener {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.updateAddress(
+                            street = it
+                        )
+                    }
+                }
+        }
     }
+
 }

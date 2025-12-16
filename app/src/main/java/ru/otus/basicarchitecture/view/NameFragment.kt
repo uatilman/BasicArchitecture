@@ -13,7 +13,6 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import ru.otus.basicarchitecture.FragmentBindingDelegate
 import ru.otus.basicarchitecture.R
 import ru.otus.basicarchitecture.databinding.FragmentNameBinding
 import ru.otus.basicarchitecture.model.ValidationEvent
@@ -28,8 +27,7 @@ import kotlin.time.ExperimentalTime
 @AndroidEntryPoint
 class NameFragment : Fragment() {
 
-    private var binding = FragmentBindingDelegate<FragmentNameBinding>(this)
-
+    private val binding = FragmentBindingDelegate<FragmentNameBinding>(this)
 
     private val viewModel by viewModels<NameFragmentModel>()
 
@@ -66,17 +64,6 @@ class NameFragment : Fragment() {
         }
     }
 
-    private fun createValidationOnFocusChangeListener(
-        validate: (String) -> Unit
-    ): View.OnFocusChangeListener {
-        return View.OnFocusChangeListener { view, hasFocus ->
-            val text = (view as? TextInputEditText)?.text?.toString() ?: ""
-            if (!hasFocus) {
-                validate(text)
-            }
-        }
-    }
-
     private fun setupClickListeners() {
         binding.withBinding { toAddressNextButton.setOnClickListener(::toAddressButtonClickListener)}
     }
@@ -101,9 +88,9 @@ class NameFragment : Fragment() {
 
     private fun doSomeValid() {
         if (
-            viewModel.name.value.isValid
-            && viewModel.surname.value.isValid
-            && viewModel.birthDate.value.isValid
+            viewModel.nameFlow.value.isValid
+            && viewModel.surnameFlow.value.isValid
+            && viewModel.birthDateFlow.value.isValid
         )
             enableNextButton()
     }
@@ -180,3 +167,4 @@ class NameFragment : Fragment() {
 
 
 }
+

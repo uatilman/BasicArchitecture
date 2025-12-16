@@ -1,4 +1,4 @@
-package ru.otus.basicarchitecture
+package ru.otus.basicarchitecture.view
 
 import android.view.LayoutInflater
 import android.view.View
@@ -23,8 +23,8 @@ class FragmentBindingDelegate<VB : ViewBinding>(private val fragment: Fragment) 
      * @param inflate Binding inflater
      */
     fun bind(
-         container: ViewGroup?,
-         inflate: (LayoutInflater, ViewGroup?, Boolean) -> VB
+        container: ViewGroup?,
+        inflate: (LayoutInflater, ViewGroup?, Boolean) -> VB
     ): View {
         fragment.viewLifecycleOwner.lifecycle.addObserver(BindingDestroyer())
         binding = inflate(fragment.layoutInflater, container, false)
