@@ -18,7 +18,7 @@ class TagsViewModel @Inject constructor(
     private val dataCache: WizardCache
 ) : ViewModel() {
 
-    private val _selectedTagsFlow = MutableStateFlow<MutableSet<Int>>(mutableSetOf())
+    private val _selectedTagsFlow = MutableStateFlow<MutableSet<Interest>>(mutableSetOf())
     val selectedTagsFlow = _selectedTagsFlow.asStateFlow()
 
     val tagsFlow: Flow<Set<Interest>> = interestsRepository.getInterests()
@@ -29,11 +29,10 @@ class TagsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun onTagSelected(id: Int, isSelected: Boolean) {
+    fun onTagSelected(id: Interest, isSelected: Boolean) {
         val currentSet = _selectedTagsFlow.value
         if (isSelected) {
             currentSet.add(id)
-
         } else {
             currentSet.remove(id)
         }

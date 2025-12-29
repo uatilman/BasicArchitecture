@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
@@ -21,8 +22,7 @@ import ru.otus.basicarchitecture.view_model.WizardCache
 @AndroidEntryPoint
 class TagsFragment : Fragment(), ItemListener {
 
-    @Inject
-    lateinit var dataCache: WizardCache
+
     private val binding = FragmentBindingDelegate<FragmentTagsBinding>(this)
 
     private val viewModel: TagsViewModel by viewModels()
@@ -63,21 +63,19 @@ class TagsFragment : Fragment(), ItemListener {
         groupTags.adapter = tagAdapter
     }
 
-    override fun onItemClick(id: Int, isSelected: Boolean) {
-        viewModel.onTagSelected(id, isSelected)
+    override fun onItemClick(interest: Interest, isSelected: Boolean) {
+        viewModel.onTagSelected(interest, isSelected)
     }
 
     private fun setupClickListeners() =
         binding.withBinding { toResultNextButton.setOnClickListener(::toTagsButtonClickListener) }
 
     private fun toTagsButtonClickListener(view: View) {
-        dataCache.printCache()
-        //todo implement navigate to next fragment
-//        findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToTagsFragment())
+        findNavController().navigate(TagsFragmentDirections.actionTagsFragmentToResultFragment())
     }
 
 }
 
 interface ItemListener {
-    fun onItemClick(id: Int, isSelected: Boolean)
+    fun onItemClick(interest: Interest, isSelected: Boolean)
 }

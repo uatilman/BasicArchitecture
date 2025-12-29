@@ -5,5 +5,5 @@ data class UserData(
     val surname: String,
     val birthDate: Long,
     val address: Address,
-    val tags: Set<Int>,
+    val tags: Set<Interest>,
 )

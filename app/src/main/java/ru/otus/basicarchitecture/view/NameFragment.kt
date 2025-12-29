@@ -31,9 +31,6 @@ class NameFragment : Fragment() {
 
     private val viewModel by viewModels<NameFragmentModel>()
 
-    private val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).apply {
-        timeZone = TimeZone.getTimeZone("UTC")
-    }
 
     private val dataPickerTitle by lazy { getString(R.string.data_picker_title) }
 

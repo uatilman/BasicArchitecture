@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import ru.otus.basicarchitecture.model.Address
+import ru.otus.basicarchitecture.model.Interest
 import ru.otus.basicarchitecture.model.UserData
 
 
@@ -19,7 +20,7 @@ interface WizardCache : AutoCloseable {
     var surname: String
     var birthDate: Long
     var address: Address
-    var tags: Set<Int>
+    var tags: Set<Interest>
 
     fun printCache() = println(userData)
 
@@ -30,7 +31,7 @@ interface WizardCache : AutoCloseable {
         override var birthDate: Long = 0
         override var address: Address = Address()
 
-        override var tags: Set<Int> = emptySet()
+        override var tags: Set<Interest> = emptySet()
 
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 

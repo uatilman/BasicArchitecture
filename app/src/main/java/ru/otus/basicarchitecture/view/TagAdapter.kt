@@ -18,7 +18,10 @@ class TagAdapter(
         parent: ViewGroup,
         viewType: Int
     ) =
-        TagViewHolder(VhTagBinding.inflate(LayoutInflater.from(parent.context), parent, false), itemListener)
+        TagViewHolder(
+            binding = VhTagBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            itemListener = itemListener
+        )
 
     override fun onBindViewHolder(holder: TagViewHolder, position: Int) =
         holder.bind(getItem(position))
@@ -36,12 +39,9 @@ class TagAdapter(
             }
             binding.root.setOnClickListener {
                 tagItem.isSelected = !tagItem.isSelected
-                if (tagItem.isSelected){
-                    tag.setBackgroundColor(R.color.teal_200)
-                } else {
-                    tag.setBackgroundColor(R.color.white)
-                }
-                itemListener.onItemClick(tagItem.interest.id, tagItem.isSelected)
+                if (tagItem.isSelected) tag.setBackgroundColor(R.color.teal_200)
+                else tag.setBackgroundColor(R.color.white)
+                itemListener.onItemClick(tagItem.interest, tagItem.isSelected)
             }
         }
     }
