@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import ru.otus.basicarchitecture.model.Address
 import ru.otus.basicarchitecture.use_case.AddressSuggestUseCase
 
@@ -20,6 +21,10 @@ class AddressFragmentModel @Inject constructor(
 
     private val _addressFlow = MutableStateFlow(Address())
     val addressFlow = _addressFlow.asStateFlow()
+
+    private val _addressVariantsFlow = MutableStateFlow<List<String>>(emptyList())
+    val addressVariantsFlow = _addressVariantsFlow.asStateFlow()
+
 
     init {
         addressFlow.onEach {
@@ -34,7 +39,16 @@ class AddressFragmentModel @Inject constructor(
     ) {
         val newAddress = Address(country, city, street)
         _addressFlow.emit(newAddress)
-        Log.i("ADDRESS_FLOW", "Emitted new address: $newAddress")
+    }
+
+    fun loadAddressVariants(rawAddress: String) {
+        viewModelScope.launch {
+            val addressVariants: List<String> =
+                addressSuggestUseCase.findAddress(rawAddress).filterNotNull()
+            println("addressVariants: \n${addressVariants.joinToString("\n")}")
+            _addressVariantsFlow.emit(addressVariants)
+
+        }
     }
 
 }

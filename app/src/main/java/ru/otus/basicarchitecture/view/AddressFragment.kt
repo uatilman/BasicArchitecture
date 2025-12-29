@@ -4,12 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import ru.otus.basicarchitecture.R
 import ru.otus.basicarchitecture.databinding.FragmentAddressBinding
 import ru.otus.basicarchitecture.view_model.AddressFragmentModel
 
@@ -21,6 +26,9 @@ class AddressFragment : Fragment() {
 
     private val viewModel by viewModels<AddressFragmentModel>()
 
+    private lateinit var adapter: ArrayAdapter<String>
+    lateinit var addresses: List<String>
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,6 +38,21 @@ class AddressFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupTextWatchers()
         setupClickListeners()
+
+        addresses = mutableListOf()
+        adapter = ArrayAdapter(requireContext(), R.layout.list_item, addresses)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.addressVariantsFlow.collect {
+                if (!adapter.isEmpty) adapter.clear()
+                addresses = it
+                adapter.addAll(addresses)
+                adapter.notifyDataSetChanged()
+            }
+        }
+        binding.withBinding {
+            (addressMenu.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+        }
+
     }
 
     private fun setupTextWatchers() {
@@ -56,6 +79,18 @@ class AddressFragment : Fragment() {
                         )
                     }
                 }
+            addressMenu.editText?.doOnTextChanged { text, _, _, count ->
+                if (count > 3) viewModel.loadAddressVariants(text.toString())
+            }
+
+
+            // TODO: change to recycler view
+            (addressMenu.editText as? AutoCompleteTextView)?.onItemClickListener =
+                AdapterView.OnItemClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+                    val selectedAddress: String? = adapter.getItem(position)
+                    addressAutoCompleteText.setText(selectedAddress)
+                }
+
         }
     }
 
@@ -66,3 +101,5 @@ class AddressFragment : Fragment() {
         findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToTagsFragment())
     }
 }
+
+

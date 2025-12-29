@@ -4,6 +4,7 @@ package ru.otus.basicarchitecture.view
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -39,8 +40,12 @@ class TagAdapter(
             }
             binding.root.setOnClickListener {
                 tagItem.isSelected = !tagItem.isSelected
-                if (tagItem.isSelected) tag.setBackgroundColor(R.color.teal_200)
-                else tag.setBackgroundColor(R.color.white)
+                val context = binding.root.context
+                val color =
+                    if (tagItem.isSelected) ContextCompat.getColor(context, R.color.teal_200)
+                    else ContextCompat.getColor(context, R.color.white)
+
+                tag.setBackgroundColor(color)
                 itemListener.onItemClick(tagItem.interest, tagItem.isSelected)
             }
         }
