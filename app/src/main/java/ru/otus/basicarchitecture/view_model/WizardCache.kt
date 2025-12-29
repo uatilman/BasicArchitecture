@@ -1,14 +1,11 @@
 package ru.otus.basicarchitecture.view_model
 
-import android.util.Log
 import dagger.hilt.android.scopes.ActivityScoped
 import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import ru.otus.basicarchitecture.model.Address
 import ru.otus.basicarchitecture.model.UserData
 
@@ -18,16 +15,22 @@ interface WizardCache : AutoCloseable {
 
     val userData: UserData
 
-    class Impl @Inject constructor(
-        nameFragmentModel: NameFragmentModel,
-        addressFragmentModel: AddressFragmentModel,
-    ) : WizardCache {
+    var name: String
+    var surname: String
+    var birthDate: Long
+    var address: Address
+    var tags: Set<Int>
 
-        private var name: String = ""
-        private var surname: String = ""
-        private var birthDate: Long = 0
-        private var address: Address = Address()
-        private var tags: List<String> = emptyList()
+    fun printCache() = println(userData)
+
+    class Impl @Inject constructor() : WizardCache {
+
+        override var name: String = ""
+        override var surname: String = ""
+        override var birthDate: Long = 0
+        override var address: Address = Address()
+
+        override var tags: Set<Int> = emptySet()
 
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
@@ -39,38 +42,6 @@ interface WizardCache : AutoCloseable {
                 address,
                 tags
             )
-
-        init {
-            with(nameFragmentModel) {
-                nameFlow.onEach {
-                    if (it.isValid) {
-                        this@Impl.name = it.fValue
-                        Log.i("CACHE", "Name: $name")
-                    }
-                }.launchIn(scope)
-
-                surnameFlow.onEach { surname ->
-                    if (surname.isValid) {
-                        this@Impl.surname = surname.fValue
-                        Log.i("CACHE", "Surname: $surname")
-                    }
-                }.launchIn(scope)
-
-                birthDateFlow.onEach { birthDate ->
-                    if (birthDate.isValid) {
-                        this@Impl.birthDate = birthDate.fValue
-                        Log.i("CACHE", "BirthDate: $birthDate")
-                    }
-                }.launchIn(scope)
-            }
-
-            addressFragmentModel.addressFlow.onEach {
-                address = it
-                Log.i("CACHE", "Address: $address")
-
-            }.launchIn(scope)
-
-        }
 
         override fun close() {
             scope.cancel()

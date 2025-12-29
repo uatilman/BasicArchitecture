@@ -7,12 +7,14 @@
     tools:context=".view.TagsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/groupNotes"
+        android:id="@+id/groupTags"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/to_result_next_button"
         app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="40dp"
         app:spanCount="3"
         tools:itemCount="30"
         tools:listitem="@layout/vh_tag" />

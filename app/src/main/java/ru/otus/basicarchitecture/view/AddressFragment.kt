@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.otus.basicarchitecture.databinding.FragmentAddressBinding
@@ -28,6 +29,7 @@ class AddressFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupTextWatchers()
+        setupClickListeners()
     }
 
     private fun setupTextWatchers() {
@@ -57,4 +59,10 @@ class AddressFragment : Fragment() {
         }
     }
 
+    private fun setupClickListeners() =
+        binding.withBinding { toTagsNextButton.setOnClickListener(::toTagsButtonClickListener) }
+
+    private fun toTagsButtonClickListener(view: View) {
+        findNavController().navigate(AddressFragmentDirections.actionAddressFragmentToTagsFragment())
+    }
 }

@@ -32,6 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_country"
+                android:text="Russia"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -53,6 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_city"
+                android:text="Moscow"
                 android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -75,13 +77,14 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:hint="@string/hint_address"
-                android:inputType="date" />
+                android:text="Kremlin"
+                android:inputType="textPersonName" />
         </com.google.android.material.textfield.TextInputLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <Button
-        android:id="@+id/to_address_next_button"
+        android:id="@+id/to_tags_next_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"

@@ -5,9 +5,11 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ActivityRetainedScoped
 import dagger.hilt.components.SingletonComponent
 import jakarta.inject.Singleton
 import ru.otus.basicarchitecture.service.DaDataService
+import ru.otus.basicarchitecture.service.InterestsRepository
 import ru.otus.basicarchitecture.use_case.AddressSuggestUseCase
 import ru.otus.basicarchitecture.use_case.FieldValidationUseCase
 import ru.otus.basicarchitecture.view_model.WizardCache
@@ -19,13 +21,16 @@ abstract class AppModule {
     @Singleton
     abstract fun daDataService(impl: DaDataService.Impl): DaDataService
 
+    @Binds
+    @Singleton
+    abstract fun interestsRepository(impl: InterestsRepository.Impl): InterestsRepository
 }
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
 abstract class ActivityModule {
     @Binds
-    @Singleton
+    @ActivityRetainedScoped
     abstract fun wizardCache(impl: WizardCache.Impl): WizardCache
 }
 
