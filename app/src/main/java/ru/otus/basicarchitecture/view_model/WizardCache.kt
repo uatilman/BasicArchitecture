@@ -6,7 +6,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import ru.otus.basicarchitecture.model.Address
 import ru.otus.basicarchitecture.model.Interest
 import ru.otus.basicarchitecture.model.UserData
 
@@ -19,17 +18,16 @@ interface WizardCache : AutoCloseable {
     var name: String
     var surname: String
     var birthDate: Long
-    var address: Address
+    var address: String
     var tags: Set<Interest>
-
-    fun printCache() = println(userData)
 
     class Impl @Inject constructor() : WizardCache {
 
         override var name: String = ""
         override var surname: String = ""
         override var birthDate: Long = 0
-        override var address: Address = Address()
+
+        override var address: String = ""
 
         override var tags: Set<Interest> = emptySet()
 

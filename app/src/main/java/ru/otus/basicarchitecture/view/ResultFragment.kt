@@ -16,7 +16,7 @@ import java.util.Date
 
 
 @AndroidEntryPoint
-class ResultFragment : Fragment(), ItemListener {
+class ResultFragment : Fragment(), TagItemListener { // TODO: заменить tag view для реализации финального экрана
 
     @Inject
     lateinit var dataCache: WizardCache
@@ -41,7 +41,7 @@ class ResultFragment : Fragment(), ItemListener {
             nameResult.text = u.name
             surnameResult.text = u.name
             birthdayResult.text = dateFormat.format(Date(u.birthDate))
-            addressResult.text = u.address.toString()
+            addressResult.text = u.address
         }
     }
 

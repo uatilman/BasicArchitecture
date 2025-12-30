@@ -13,7 +13,7 @@ import ru.otus.basicarchitecture.databinding.VhTagBinding
 
 
 class TagAdapter(
-    private val itemListener: ItemListener,
+    private val tagItemListener: TagItemListener,
 ) : ListAdapter<TagItem, TagAdapter.TagViewHolder>(TagDiffCallback) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -21,7 +21,7 @@ class TagAdapter(
     ) =
         TagViewHolder(
             binding = VhTagBinding.inflate(LayoutInflater.from(parent.context), parent, false),
-            itemListener = itemListener
+            tagItemListener = tagItemListener
         )
 
     override fun onBindViewHolder(holder: TagViewHolder, position: Int) =
@@ -29,7 +29,7 @@ class TagAdapter(
 
     class TagViewHolder(
         private val binding: VhTagBinding,
-        private val itemListener: ItemListener,
+        private val tagItemListener: TagItemListener,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private val tag: TextView = binding.root
@@ -46,7 +46,7 @@ class TagAdapter(
                     else ContextCompat.getColor(context, R.color.white)
 
                 tag.setBackgroundColor(color)
-                itemListener.onItemClick(tagItem.interest, tagItem.isSelected)
+                tagItemListener.onItemClick(tagItem.interest, tagItem.isSelected)
             }
         }
     }

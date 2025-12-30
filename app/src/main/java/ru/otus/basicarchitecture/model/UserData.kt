@@ -4,6 +4,6 @@ data class UserData(
     val name: String,
     val surname: String,
     val birthDate: Long,
-    val address: Address,
+    val address: String,
     val tags: Set<Interest>,
 )

@@ -12,15 +12,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
-import jakarta.inject.Inject
 import kotlinx.coroutines.launch
 import ru.otus.basicarchitecture.databinding.FragmentTagsBinding
 import ru.otus.basicarchitecture.model.Interest
 import ru.otus.basicarchitecture.view_model.TagsViewModel
-import ru.otus.basicarchitecture.view_model.WizardCache
 
 @AndroidEntryPoint
-class TagsFragment : Fragment(), ItemListener {
+class TagsFragment : Fragment(), TagItemListener {
 
 
     private val binding = FragmentBindingDelegate<FragmentTagsBinding>(this)
@@ -76,6 +74,6 @@ class TagsFragment : Fragment(), ItemListener {
 
 }
 
-interface ItemListener {
+interface TagItemListener {
     fun onItemClick(interest: Interest, isSelected: Boolean)
 }
