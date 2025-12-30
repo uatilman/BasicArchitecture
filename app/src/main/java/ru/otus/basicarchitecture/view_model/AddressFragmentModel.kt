@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.otus.basicarchitecture.use_case.AddressSuggestUseCase
+import ru.otus.basicarchitecture.view.LoadAddressesViewState
 
 @HiltViewModel
 class AddressFragmentModel @Inject constructor(
@@ -20,8 +21,9 @@ class AddressFragmentModel @Inject constructor(
     private val _addressFlow = MutableStateFlow("")
     val addressFlow = _addressFlow.asStateFlow()
 
-    private val _addressVariantsFlow = MutableStateFlow<List<String>>(emptyList())
-    val addressVariantsFlow = _addressVariantsFlow.asStateFlow()
+    private val _state: MutableStateFlow<LoadAddressesViewState> =
+        MutableStateFlow(LoadAddressesViewState.LoadAddresses())
+    val state = _state.asStateFlow()
 
 
     init {
@@ -41,15 +43,25 @@ class AddressFragmentModel @Inject constructor(
     }
 
     suspend fun clearVariants() {
-        _addressVariantsFlow.emit(emptyList())
+        _state.emit(LoadAddressesViewState.LoadAddresses())
+    }
+
+    suspend fun addressSelected(){
+        _state.emit(LoadAddressesViewState.AddressSelected)
     }
 
     fun loadAddressVariants(rawAddress: String) {
         viewModelScope.launch {
-            val addressVariants: List<String> =
-                addressSuggestUseCase.findAddress(rawAddress)
-            println("addressVariants: \n${addressVariants.joinToString("\n")}")
-            _addressVariantsFlow.emit(addressVariants)
+            _state.emit(LoadAddressesViewState.LoadingProgress)
+            runCatching {
+                val addressVariants: List<String> =
+                    addressSuggestUseCase.findAddress(rawAddress)
+                println("addressVariants: \n${addressVariants.joinToString("\n")}")
+                _state.emit(LoadAddressesViewState.Content(addressVariants))
+            }.getOrElse {
+                _state.emit(LoadAddressesViewState.LoadAddresses(it as Exception))
+            }
+
 
         }
     }

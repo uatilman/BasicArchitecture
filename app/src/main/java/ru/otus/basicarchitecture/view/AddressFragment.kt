@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,6 +14,8 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.otus.basicarchitecture.databinding.FragmentAddressBinding
 import ru.otus.basicarchitecture.view_model.AddressFragmentModel
@@ -23,7 +26,6 @@ class AddressFragment : Fragment(), AddressItemListener {
 
     private var binding = FragmentBindingDelegate<FragmentAddressBinding>(this)
 
-    // TODO: добавить loader на время загрузки вариантов RecyclerView
     private val viewModel by viewModels<AddressFragmentModel>()
 
     private val adapter: AddressAdapter by lazy { AddressAdapter(this) }
@@ -39,46 +41,65 @@ class AddressFragment : Fragment(), AddressItemListener {
         setupTextWatchers()
         setupClickListeners()
         setupRecyclerView()
-        collectToAddressVariantsFlow()
+        collectToAddressVariantsStateFlow()
         collectToSelectedFlow()
     }
 
     private fun setupRecyclerView() = binding.withBinding { addressVariants.adapter = adapter }
 
     private fun collectToSelectedFlow() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        viewModel.state.onEach {
             viewModel.addressFlow
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle)
-                .collect { address ->
-                    binding.withBinding {
-                        addressMenu.editText?.let {
-                            it.setText(address)
-                            it.setSelection(address.length) //сдвинуть курсор в конец
-                        }
+                .collect(::onAddressSelected)
+        }.launchIn(lifecycleScope)
+    }
+
+    private fun onAddressSelected(address: String) {
+        binding.withBinding {
+            addressMenu.editText?.let {
+                it.setText(address)
+                it.setSelection(address.length) //сдвинуть курсор в конец
+            }
+        }
+    }
+
+    private fun collectToAddressVariantsStateFlow() {
+        viewModel.state.onEach {
+            binding.withBinding {
+                when (it) {
+                    is LoadAddressesViewState.Content -> {
+                        addressVariants.isVisible = true
+                        loadIndicator.isVisible = false
+                        adapter.submitList(it.addresses.map { AddressItem(it) })
+                    }
+
+                    is LoadAddressesViewState.LoadAddresses -> {
+                        addressVariants.isVisible = false
+                        loadIndicator.isVisible = false
+                    }
+
+                    LoadAddressesViewState.LoadingProgress -> {
+                        addressVariants.isVisible = false
+                        loadIndicator.isVisible = true
+                    }
+
+                    LoadAddressesViewState.AddressSelected -> {
+                        addressVariants.isVisible = false
+                        loadIndicator.isVisible = false
+                        hideKeyboard()
+                        toTagsNextButton.requestFocus()
                     }
                 }
-        }
+            }
+        }.launchIn(lifecycleScope)
     }
-
-    private fun collectToAddressVariantsFlow() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.addressVariantsFlow
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle)
-                .collect(::submitToAddressVariantsList)
-        }
-    }
-
-    private fun submitToAddressVariantsList(addresses: List<String>) {
-        adapter.submitList(addresses.map { AddressItem(it) })
-    }
-
 
     private fun setupTextWatchers() {
         binding.withBinding {
             addressMenu.editText?.doOnTextChanged { text, start, before, count ->
                 if (count > 3) {
                     viewModel.loadAddressVariants(text.toString())
-                    addressVariants.visibility = View.VISIBLE
                 }
             }
         }
@@ -98,9 +119,7 @@ class AddressFragment : Fragment(), AddressItemListener {
                 if (viewModel.updateAddress(address)) {
                     viewModel.loadAddressVariants(address)
                 } else {
-                    hideKeyboard()
-                    addressVariants.visibility = View.GONE
-                    toTagsNextButton.requestFocus()
+                    viewModel.addressSelected()
                 }
             }
         }
