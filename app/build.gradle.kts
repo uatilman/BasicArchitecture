@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,9 +7,7 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.androidx.navigation.safeargs)
     alias(libs.plugins.kotlinSerialization)
-//    alias(libs.plugins.secrets.gradle.plugin)
-    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
-
+    alias(libs.plugins.secrets.gradle.plugin)
     id("kotlin-kapt")
 }
 
@@ -38,13 +38,22 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_17
+        }
     }
+
     buildFeatures {
         viewBinding = true
         buildConfig = true
     }
+
+    setPublishNonDefault(true)
+}
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
 
 dependencies {
@@ -62,11 +71,11 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.bundles.serialization)
     implementation(libs.bundles.net)
-//    implementation(libs.bundles.coroutines)
-
-
     ksp(libs.hilt.compiler)
     testImplementation(libs.junit)
+    testImplementation(libs.jupiter)
+    testImplementation(libs.junitParams)
+    testRuntimeOnly(libs.junit.platform.launcher)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }
