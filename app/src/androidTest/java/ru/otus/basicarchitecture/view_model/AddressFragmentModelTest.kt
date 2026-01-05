@@ -70,6 +70,12 @@ class AddressFragmentModelTest {
         Dispatchers.resetMain()
     }
 
+    /**
+     * Тестирует обновление адреса.
+     *
+     * Проверяет, что при вызове updateAddress с непустым и отличающимся от текущего адресом
+     * возвращается true и новый адрес корректно устанавливается в ViewModel и кеше.
+     */
     @Test
     fun updateAddress_emits_new_address_when_it_is_not_blank_and_different_from_current() =
         runTest {
@@ -83,6 +89,12 @@ class AddressFragmentModelTest {
             assertEquals(newAddress, wizardCache.address)
         }
 
+    /**
+     * Тестирует обновление адреса с пустым значением.
+     *
+     * Проверяет, что при попытке установить пустой адрес
+     * метод возвращает false и состояние не изменяется.
+     */
     @Test
     fun updateAddress_returns_false_when_address_is_blank() = runTest {
         val blankAddress = ""
@@ -93,6 +105,12 @@ class AddressFragmentModelTest {
         assertEquals("", viewModel.addressFlow.first())
     }
 
+    /**
+     * Тестирует обновление адреса на уже установленное значение.
+     *
+     * Проверяет, что при попытке установить уже существующий адрес
+     * метод возвращает false, так как изменений не происходит.
+     */
     @Test
     fun updateAddress_returns_false_when_address_is_the_same_as_current() = runTest {
         val sameAddress = "Same Address"
@@ -103,6 +121,12 @@ class AddressFragmentModelTest {
         assertFalse(result)
     }
 
+    /**
+     * Тестирует очистку вариантов адресов.
+     *
+     * Проверяет, что метод clearVariants устанавливает состояние
+     * LoadAddresses без ошибки, сбрасывая предыдущие данные.
+     */
     @Test
     fun clearVariants_emits_LoadAddresses_state() = runTest {
         val initialState = viewModel.state.first()
@@ -115,6 +139,12 @@ class AddressFragmentModelTest {
         assertNull((newState as LoadAddressesViewState.LoadAddresses).error)
     }
 
+    /**
+     * Тестирует выбор адреса.
+     *
+     * Проверяет, что метод addressSelected устанавливает состояние
+     * AddressSelected, сигнализируя о завершении выбора адреса.
+     */
     @Test
     fun addressSelected_emits_AddressSelected_state() = runTest {
         val initialState = viewModel.state.first()
@@ -126,6 +156,15 @@ class AddressFragmentModelTest {
         assertTrue(newState is LoadAddressesViewState.AddressSelected)
     }
 
+    /**
+     * Тестирует загрузку вариантов адресов в случае успеха.
+     *
+     * Проверяет, что при успешном получении вариантов адресов:
+     * 1. Сначала испускается состояние LoadingProgress
+     * 2. Затем испускается состояние Content с полученными вариантами
+     * 3. Сохраняется правильный порядок состояний
+     * 4. Вызывается use case ровно один раз
+     */
     @Test
     fun loadAddressVariants_emits_LoadingProgress_then_Content_on_success() = runTest {
 
@@ -182,6 +221,16 @@ class AddressFragmentModelTest {
         assertEquals("Ожидаемые варианты не совпадают", expectedVariants, contentState.addresses)
     }
 
+    /**
+     * Тестирует загрузку вариантов адресов в случае ошибки.
+     *
+     * Проверяет, что при ошибке получения вариантов адресов:
+     * 1. Сначала испускается состояние LoadingProgress
+     * 2. Затем испускается состояние LoadAddresses с ошибкой
+     * 3. Сохраняется правильный порядок состояний
+     * 4. Вызывается use case ровно один раз
+     * 5. Ошибка корректно передается в состояние
+     */
     @Test
     fun loadAddressVariants_emits_LoadingProgress_then_Error_on_failure() = runTest {
 
