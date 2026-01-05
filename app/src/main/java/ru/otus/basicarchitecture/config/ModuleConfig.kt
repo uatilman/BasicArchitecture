@@ -11,6 +11,7 @@ import jakarta.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import ru.otus.basicarchitecture.BuildConfig
 import ru.otus.basicarchitecture.model.net.GetAddresses
 import ru.otus.basicarchitecture.service.DaDataService
 import ru.otus.basicarchitecture.service.InterestsRepository
@@ -20,7 +21,7 @@ import ru.otus.basicarchitecture.service.net.buildRetrofit
 import ru.otus.basicarchitecture.use_case.AddressSuggestUseCase
 import ru.otus.basicarchitecture.use_case.FieldValidationUseCase
 import ru.otus.basicarchitecture.view_model.WizardCache
-import java.util.concurrent.TimeUnit
+import kotlin.time.Duration
 
 
 @Module
@@ -59,7 +60,7 @@ class NetModuleProvider {
     @Provides
     @Singleton
     fun okHttp(authInterceptor: AuthInterceptor): OkHttpClient = OkHttpClient.Builder()
-        .callTimeout(30, TimeUnit.SECONDS)
+        .callTimeout(Duration.parse(BuildConfig.LOAD_ADDRESS_TIMOUT))
         .addInterceptor(authInterceptor)
         .addInterceptor(HttpLoggingInterceptor().apply {
             setLevel(HttpLoggingInterceptor.Level.BASIC)

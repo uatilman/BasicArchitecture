@@ -48,7 +48,7 @@ class AddressFragment : Fragment(), AddressItemListener {
     private fun setupRecyclerView() = binding.withBinding { addressVariants.adapter = adapter }
 
     private fun collectToSelectedFlow() {
-        viewModel.state.onEach {
+        viewModel.addressFlow.onEach {
             viewModel.addressFlow
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collect(::onAddressSelected)
@@ -71,22 +71,26 @@ class AddressFragment : Fragment(), AddressItemListener {
                     is LoadAddressesViewState.Content -> {
                         addressVariants.isVisible = true
                         loadIndicator.isVisible = false
-                        adapter.submitList(it.addresses.map { AddressItem(it) })
+                        errorMessage.isVisible = false
+                        adapter.submitList(it.addresses.map { adr -> AddressItem(adr) })
                     }
 
                     is LoadAddressesViewState.LoadAddresses -> {
                         addressVariants.isVisible = false
                         loadIndicator.isVisible = false
+                        errorMessage.isVisible = it.error != null
                     }
 
                     LoadAddressesViewState.LoadingProgress -> {
                         addressVariants.isVisible = false
                         loadIndicator.isVisible = true
+                        errorMessage.isVisible = false
                     }
 
                     LoadAddressesViewState.AddressSelected -> {
                         addressVariants.isVisible = false
                         loadIndicator.isVisible = false
+                        errorMessage.isVisible = false
                         hideKeyboard()
                         toTagsNextButton.requestFocus()
                     }

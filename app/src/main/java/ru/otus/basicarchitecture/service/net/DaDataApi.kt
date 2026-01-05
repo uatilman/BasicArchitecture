@@ -8,10 +8,10 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.http.Body
 import retrofit2.http.POST
+import ru.otus.basicarchitecture.BuildConfig
 import ru.otus.basicarchitecture.model.net.AddressRequest
 import ru.otus.basicarchitecture.model.net.Suggestions
 
-private const val baseUrl = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/"
 
 interface DaDataApi {
     @POST("address")
@@ -19,7 +19,7 @@ interface DaDataApi {
 }
 
 fun buildRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
-    .baseUrl(baseUrl)
+    .baseUrl(BuildConfig.DADATA_API_URL)
     .client(okHttpClient)
     .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
     .build()
