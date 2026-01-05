@@ -17,7 +17,7 @@ android {
 
     defaultConfig {
         applicationId = "ru.otus.basicarchitecture"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -51,6 +51,12 @@ android {
     }
 
     setPublishNonDefault(true)
+
+    testOptions {
+        packaging{
+            jniLibs.useLegacyPackaging = true
+        }
+    }
 }
 tasks.withType<Test> {
     useJUnitPlatform()
@@ -78,4 +84,11 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(libs.kotlin.coroutines.core)
+    androidTestImplementation(libs.kotlin.coroutines.test)
+    androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.mockk.agent.android)
+    
 }
